@@ -1,20 +1,28 @@
 package com.example.newfinal;
 
-import android.app.AppComponentFactory;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import org.bson.Document;
+import org.bson.types.Binary;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Fragment2 extends Fragment {
@@ -65,7 +73,7 @@ public class Fragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate( R.layout.fragment2, container, false );
         GridView grid = view.findViewById(R.id.myGrid);
-
+        getdata();
         ImageAdapter imageAdapter = new ImageAdapter( context );
         grid.setAdapter( imageAdapter );
 
@@ -81,5 +89,14 @@ public class Fragment2 extends Fragment {
         return view;
     }
 
+
+    public void getdata() {
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+        MongoDatabase db = mongoClient.getDatabase("test");
+
+        MongoCollection<Document> documentMongoCollection = db.getCollection("fs.chunks");
+        Binary data = (Binary) documentMongoCollection.distinct("data", null);
+    }
 
 }
